@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Book" ALTER COLUMN "status" DROP DEFAULT,
+ALTER COLUMN "price" DROP NOT NULL;

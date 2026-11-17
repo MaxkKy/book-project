@@ -1,0 +1,71 @@
+"use client";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { apiClinet } from "../../services/api/apiClient";
+import { useApiError } from "../../hooks/useApiError";
+import { useRouter } from "next/navigation";
+type useTypeUser = {
+    username: string;
+  };
+export default function Navbar() {
+  const { handleError } = useApiError();
+  const [user,setUser] = useState <useTypeUser | null>(null)
+  const router = useRouter();
+  async function onLogOut() {
+    try {
+      await apiClinet.post(`/logout`);
+      router.push(`/login`)
+    } catch (err) {
+      handleError(err);
+    }
+  }
+  useEffect(()=>{
+    async function fetchUser(){
+        try{
+            const res = await apiClinet.get(`/user`)
+            setUser(res.data)
+        }
+        catch(err){
+            handleError(err)
+        }
+    }fetchUser();
+  },[])
+  return (
+    <nav className="sticky top-0 z-40 border-b border-border/60 bg-background/75 backdrop-blur-md">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6">
+        <Link
+          href="/"
+          className="brand-mark text-2xl font-bold text-ink transition-opacity hover:opacity-80 sm:text-[1.65rem]"
+        >
+        Food list of {user?.username}
+        </Link>
+        <ul className="hidden items-center gap-1 md:flex">
+          <li>
+            <Link
+              href="/"
+              className="relative px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100"
+            >
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/dashboard/post"
+              className="relative px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100"
+            >
+              สั่งอาหาร
+            </Link>
+          </li>
+          <li>
+            <button
+              onClick={onLogOut}
+              className="relative px-3 py-2 text-sm font-medium text-foreground/80 transition-colors hover:text-foreground after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-primary after:transition-transform hover:after:scale-x-100"
+            >
+              Log Out
+            </button>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  );
+}

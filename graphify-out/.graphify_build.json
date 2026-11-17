@@ -1,0 +1,7 @@
+{
+  "excludes": [
+    ".agents",
+    ".claude",
+    ".windsurf"
+  ]
+}
